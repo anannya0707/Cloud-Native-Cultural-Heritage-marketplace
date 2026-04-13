@@ -6,38 +6,38 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 // 🔐 SIGNUP
-// router.post("/signup", async (req, res) => {
-//   try {
-//     console.log("REQ BODY:", req.body);
+router.post("/signup", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
 
-//     const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-//     if (!name || !email || !password) {
-//       return res.status(400).json({ message: "All fields are required" });
-//     }
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
 
-//     const existingUser = await User.findOne({ email });
-//     console.log("Checking user...");
+    const user = await User.create({ name, email, password });
+    
+    // Generate token
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET || "default_secret",
+      { expiresIn: "1d" }
+    );
 
-//     if (existingUser) {
-//       return res.status(400).json({ message: "User already exists" });
-//     }
+    res.status(201).json({
+      message: "User created successfully",
+      token,
+      user: { id: user._id, name: user.name, email: user.email }
+    });
 
-//     const user = await User.create({ name, email, password });
-//     console.log("User created successfully");
-
-//     res.status(201).json({
-//       message: "User created successfully",
-//       user
-//     });
-
-//   } catch (error) {
-//     console.error("ERROR:", error.message);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-router.post("/signup", (req, res) => {
-  return res.json({ message: "Signup route working" });
+  } catch (error) {
+    console.error("SIGNUP ERROR:", error.message);
+    res.status(500).json({ message: error.message });
+  }
 });
 
 // 🔐 LOGIN
@@ -59,11 +59,11 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign(
       { id: user._id },
-      "secret123",
+      process.env.JWT_SECRET || "default_secret",
       { expiresIn: "1d" }
     );
 
-    res.json({ message: "Login successful", token });
+    res.json({ message: "Login successful", token, user: { id: user._id, name: user.name, email: user.email } });
 
   } catch (error) {
     console.error("LOGIN ERROR:", error.message);

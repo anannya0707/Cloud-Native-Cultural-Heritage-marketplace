@@ -1,24 +1,22 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const mongoose = require("mongoose");
+const connectDB = require("./config/db");
 
-const app = express(); // ✅ CREATE FIRST
+const app = express();
 
-// Routes import
-const authRoutes = require("./routes/auth");
+// Connect to Database
+connectDB();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes use
-app.use("/api/auth", authRoutes); // ✅ USE AFTER app is created
+// Routes import
+const authRoutes = require("./routes/auth");
 
-// DB connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Atlas Connected 🚀"))
-  .catch((err) => console.error(err));
+// Routes use
+app.use("/api/auth", authRoutes);
 
 // Test route
 app.get("/", (req, res) => {
