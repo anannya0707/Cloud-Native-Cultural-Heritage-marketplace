@@ -1,7 +1,9 @@
-const API_BASE_URL = "https://cloud-native-cultural-heritage.onrender.com/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export const apiCall = async (endpoint: string, method: string = "GET", body?: any) => {
   const token = localStorage.getItem("token");
+
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
