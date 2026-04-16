@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://cloud-native-cultural-heritage.onrender.com/api";
 
 export const apiCall = async (endpoint: string, method: string = "GET", body?: any) => {
   const token = localStorage.getItem("token");
