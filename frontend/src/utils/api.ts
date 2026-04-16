@@ -23,6 +23,6 @@ export const apiCall = async (endpoint: string, method: string = "GET", body?: a
   if (!response.ok) {
     throw new Error(data.message || "Something went wrong");
   }
-
+  console.log("API BASE:", API_BASE_URL);
   return data;
 };
